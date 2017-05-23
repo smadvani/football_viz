@@ -9,6 +9,13 @@ Created on Wed May 17 20:42:57 2017
 import httplib
 import json
 
+def leagues():
+    connection = httplib.HTTPConnection('api.football-data.org')
+    headers = { 'X-Auth-Token': '7d8ec6405f2f43bca384af37191f7eba', 'X-Response-Control': 'minified' }
+    connection.request('GET', '/v1/competitions/', None, headers )
+    response = json.loads(connection.getresponse().read().decode())
+    return response
+
 def fixtures():
     connection = httplib.HTTPConnection('api.football-data.org')
     headers = { 'X-Auth-Token': '7d8ec6405f2f43bca384af37191f7eba', 'X-Response-Control': 'minified' }
@@ -16,7 +23,8 @@ def fixtures():
     response = json.loads(connection.getresponse().read().decode())
     return response
 
-print fixtures()["fixtures"]
+for i in leagues():
+    print i['id'], i['league'], i['caption']
 
 
   
