@@ -23,9 +23,15 @@ def fixtures():
     response = json.loads(connection.getresponse().read().decode())
     return response
 
+lgdict = {}
+lg =[]
 for i in leagues():
-    print i['id'], i['league'], i['caption']
+    #lgdict.
+    lg.append([i['id'], i['league'], i['caption']])
+    #print i['id'],'    ', i['year'],'    ', i['league'],'    ', i['caption']
 
+#print leagues()[0]
+print lg
 
   
 
