@@ -44,8 +44,9 @@ for i in lg:
         lgid = str(i[0])
         break
     
-print len(fixtures(lgid))
+print fixtures(lgid)['fixtures'][380]
     
+        
 
 
   
