@@ -44,15 +44,15 @@ for i in lg:
        lg_id = i[0]
        
     
-#print lg_id
+print lg
     
 #print '/v1/competitions/'+str(lg_id)+'/fixtures/'
-fixture_redux = []
-dict1 = {}
-for i in fixtures(lg_id)['fixtures']:
-    fixture_redux.append([i['homeTeamName'], i['matchday'], i['awayTeamName'], i['date'], i['result']])
-print fixture_redux
-    
+#fixture_redux = []
+#dict1 = {}
+#for i in fixtures(lg_id)['fixtures']:
+#    fixture_redux.append([i['homeTeamName'], i['matchday'], i['awayTeamName'], i['date'], i['result']])
+#print fixture_redux
+#    
         
 
 
