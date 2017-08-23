@@ -9,7 +9,24 @@ initial def structure from api examples
 #import http.client
 import httplib
 import json
+import psycopg2 as pg
 
+def connect():
+    db = 'football_viz'
+    usr = 'sadvani'
+    host = 'localhost'
+    port = '5432'
+    pw = 'pg95'
+    cs = "dbname=%s user=%s password=%s host=%s port=%s" %(db,usr,pw,host,port)
+    return cs
+
+#print connect()
+#try:
+#    con = pg.connect(connect())
+#    print 'connected'
+#    con.close()
+#except:
+#    print 'connection failed'
 
 def leagues():
     connection = httplib.HTTPConnection('api.football-data.org')
@@ -36,15 +53,27 @@ for i in leagues():
 #print lg
 #print lgdict
 
-#print lg[0]
+
+con = pg.connect(connect())
+insrt = 'insert into league (name) values'
 
 for i in lg:
-#    print i  ## returns each list
-    if unicode(i[3]) == 'Premier League 2017/18':
-       lg_id = i[0]
+    lg_nm = (i[3].replace('2017/18','')).replace('2017','').strip().encode('utf-8').decode('ascii','ignore')
+    insrt = insrt+"('"+ lg_nm+"'),"
+    #print i  ## returns each list
+#    if unicode(i[3]) == 'Premier League 2017/18':
+#       lg_id = i[0]
+insrt = insrt[:-1]+';'
+#print insrt
+cur = con.cursor()
+
+cur.execute(insrt)
+con.commit()
+con.close()
+
        
     
-print lg
+#print lg
     
 #print '/v1/competitions/'+str(lg_id)+'/fixtures/'
 #fixture_redux = []

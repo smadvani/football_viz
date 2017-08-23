@@ -14,7 +14,14 @@
 --=====================================================================
 --	2017-08-22: Created. SA
 --=====================================================================
-create database football_viz;
+-- drop database if exists football_viz;
+-- create database football_viz;
+
+drop table if exists fixtures;
+drop table if exists league;
+drop table if exists league;
+drop table if exists teams;
+drop table if exists season;
 
 create table league 
     (
@@ -45,7 +52,7 @@ create table league_team
      id serial primary key,
      league_id integer not null,
      team_id integer not null,
-     season_id character varying not null,
+     season_id integer not null,
      constraint fk_lt_leag foreign key (league_id) references league (id),
      constraint fk_lt_team foreign key (team_id) references teams (id),
      constraint fk_lt_seas foreign key (season_id) references season (id)
