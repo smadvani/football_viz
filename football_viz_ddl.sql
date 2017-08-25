@@ -18,7 +18,7 @@
 -- create database football_viz;
 
 drop table if exists fixtures;
-drop table if exists league;
+drop table if exists league_team;
 drop table if exists league;
 drop table if exists teams;
 drop table if exists season;
@@ -26,6 +26,7 @@ drop table if exists season;
 create table league 
     (
      id serial primary key,
+     api_id integer not null,
      name character varying (255) not null,
      country character varying (60),
      tier integer
@@ -36,7 +37,7 @@ create table teams
     (
      id serial primary key,
      name character varying (64) not null,
-     short_name character varying (24) not null
+     short_name character varying (24) 
      )
 ;
 
@@ -62,11 +63,13 @@ create table league_team
 create table fixtures
     (
      id serial primary key,
+     api_id integer not null,
      home_team_id integer not null,
      away_team_id integer not null,
      scheduled_date date,
      home_team_score integer,
      away_team_score integer,
+     data_played date,
      constraint fk_fx_ht foreign key (home_team_id) references teams (id),
      constraint fk_fx_at foreign key (away_team_id) references teams (id)
     )

@@ -11,7 +11,7 @@ import httplib
 import json
 import psycopg2 as pg
 
-def connect():
+def cnxn():
     db = 'football_viz'
     usr = 'sadvani'
     host = 'localhost'
@@ -42,37 +42,15 @@ def fixtures(league_id):
     connection.request('GET', '/v1/competitions/'+str(league_id)+'/fixtures/', None, headers )
     response = json.loads(connection.getresponse().read())
     return response
-
-lgdict = {}
-lg =[]
-for i in leagues():
-    #lgdict = dict.fromkeys('id',)
-    # lg = list of lists
-    lg.append([i['id'], i['year'], i['league'], i['caption']])
-    #print i['id'],'    ', i['year'],'    ', i['league'],'    ', i['caption']
-#print lg
-#print lgdict
-
-
-con = pg.connect(connect())
-insrt = 'insert into league (name) values'
-
-for i in lg:
-    lg_nm = (i[3].replace('2017/18','')).replace('2017','').strip().encode('utf-8').decode('ascii','ignore')
-    insrt = insrt+"('"+ lg_nm+"'),"
-    #print i  ## returns each list
-#    if unicode(i[3]) == 'Premier League 2017/18':
-#       lg_id = i[0]
-insrt = insrt[:-1]+';'
-#print insrt
-cur = con.cursor()
-
-cur.execute(insrt)
-con.commit()
-con.close()
-
-       
     
+def teams(league_id):
+    connection = httplib.HTTPConnection('api.football-data.org')
+    headers = { 'X-Auth-Token': '7d8ec6405f2f43bca384af37191f7eba', 'X-Response-Control': 'minified' }
+    connection.request('GET', '/v1/competitions/'+str(league_id)+'/teams/', None, headers )
+    response = json.loads(connection.getresponse().read())
+    return response
+
+  
 #print lg
     
 #print '/v1/competitions/'+str(lg_id)+'/fixtures/'
