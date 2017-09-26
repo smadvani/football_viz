@@ -9,7 +9,6 @@ initial def structure from api examples
 #import http.client
 import httplib
 import json
-import psycopg2 as pg
 
 def cnxn():
     db = 'football_viz'
@@ -59,7 +58,9 @@ def teams(league_id):
 #for i in fixtures(lg_id)['fixtures']:
 #    fixture_redux.append([i['homeTeamName'], i['matchday'], i['awayTeamName'], i['date'], i['result']])
 #print fixture_redux
-#    
+# 
+#for league in leagues():
+#    print league['year']
         
 
 

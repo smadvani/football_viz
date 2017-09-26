@@ -13,9 +13,9 @@
 --	HISTORY
 --=====================================================================
 --	2017-08-22: Created. SA
---=====================================================================
--- drop database if exists football_viz;
--- create database football_viz;
+--===================================================================== 
+--drop database if exists football_viz;
+--create database football_viz;
 
 drop table if exists fixtures;
 drop table if exists league_team;

@@ -10,11 +10,10 @@ import api_football as gts
 import psycopg2 as pg
 
 
-
 def pop_lg():
 #    lgdict = {}
     lg =[]
-    for i in leagues():
+    for i in gts.leagues():
         #lgdict = dict.fromkeys('id',)
         # lg = list of lists
         lg.append([i['id'], i['year'], i['league'], i['caption']])
@@ -23,7 +22,7 @@ def pop_lg():
     #print lgdict
     
     
-    con = pg.connect(cnxn())
+    con = pg.connect(gts.cnxn())
     insrt = 'insert into league (name, api_id) values'
     
     for i in lg:
@@ -63,11 +62,25 @@ def pop_team():
         cur = con.cursor()
         cur.execute(insrt)
         con.commit()
-        con.close()
+    con.close()
         #print gts.teams(i[0])
         #print gts.fixtures(i[0])['fixtures'][0]
-
-
+        
+def pop_season():
+    con = pg.connect(gts.cnxn())
+    cur = con.cursor()
+    for league in gts.leagues():
+        sel_seas = "select season from season;"
+        cur.execute(sel_seas)
+        seasons = cur.fetchall()
+        print len(seasons), str(league['year'])
+        if len(seasons)==0 or league['year'] not in seasons[0][0]:
+                insrt= 'insert into season (season) values ('+league['year']+');'
+                cur = con.cursor()
+                cur.execute(insrt)
+                con.commit()
+    con.close()
+  
 def pop_fix():
     a = 1
 #    fix = gts.fixtures(443)
@@ -76,7 +89,9 @@ def pop_fix():
 #    print gts.fixtures(i[0])
     
 if __name__ == "__main__":
-    pop_lg()
-    pop_team()
-    pop_fix()
+    #pop_lg()
+    pop_season()    
+    #pop_team()
+    #pop_team_season()
+    #pop_fix()
          
