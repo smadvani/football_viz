@@ -10,6 +10,7 @@ initial def structure from api examples
 import httplib
 import json
 
+#! start postgres with: sudo service postgresql start
 def cnxn():
     db = 'football_viz'
     usr = 'sadvani'

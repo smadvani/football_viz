@@ -8,6 +8,7 @@ use to populate db tables
 
 import api_football as gts
 import psycopg2 as pg
+import string as st
 
 
 def pop_lg():
@@ -50,18 +51,24 @@ def pop_team():
     for i in apiid:
         insrt = 'insert into teams (name, short_name) values'
         teams = gts.teams(i[0])
-        for team in teams['teams']:
-            nm = "'"+team['name'].encode('utf-8').decode('ascii','ignore')+"'"
-            if team['shortName'] is None:
-                sn = 'null'
-            else:
-                sn = "'"+team['shortName'].encode('utf-8').decode('ascii','ignore')+"'"
-            insrt = insrt+"("+nm+", "+sn+"), "
-        insrt = insrt[:-2]+';'
-#        print insrt
-        cur = con.cursor()
-        cur.execute(insrt)
-        con.commit()
+        #! one element does not have team - only do if there is the key "team"
+        if 'teams' in teams:
+            #print teams
+            for team in teams['teams']:
+#                print team['id']
+#                print team['name'].encode('utf-8').decode('ascii','ignore')
+                nm = "'"+team['name'].encode('utf-8').decode('ascii','ignore')+"'"
+                if team['shortName'] is None or team['shortName']=="":
+                    sn = 'null'
+                else:
+                    #! Kaiserslautern has short name of "K'lautern"
+                    sn = "'"+st.replace(team['shortName'].encode('utf-8').decode('ascii','ignore'), "K'l", "Kl")+"'"
+                insrt = insrt+"("+nm+", "+sn+"), "
+            insrt = insrt[:-2]+';'
+            #print insrt
+            cur = con.cursor()
+            cur.execute(insrt)
+            con.commit()
     con.close()
         #print gts.teams(i[0])
         #print gts.fixtures(i[0])['fixtures'][0]
@@ -90,8 +97,8 @@ def pop_fix():
     
 if __name__ == "__main__":
     #pop_lg()
-    pop_season()    
-    #pop_team()
+    #pop_season()    
+    pop_team()
     #pop_team_season()
     #pop_fix()
          

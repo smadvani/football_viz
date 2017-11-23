@@ -8,11 +8,13 @@
 --	NOTES:
 --		1) need to be able to store year, teams, leagues match ups, home team, away team, fixtures and score
 --              2) Points should be derivable
+--        3) sudo service postgresql start
 --			
 --
 --	HISTORY
 --=====================================================================
 --	2017-08-22: Created. SA
+
 --===================================================================== 
 --drop database if exists football_viz;
 --create database football_viz;
