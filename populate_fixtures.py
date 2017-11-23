@@ -80,7 +80,7 @@ def pop_season():
         sel_seas = "select season from season;"
         cur.execute(sel_seas)
         seasons = cur.fetchall()
-        print len(seasons), str(league['year'])
+        #print len(seasons), str(league['year'])
         if len(seasons)==0 or league['year'] not in seasons[0][0]:
                 insrt= 'insert into season (season) values ('+league['year']+');'
                 cur = con.cursor()
@@ -89,16 +89,31 @@ def pop_season():
     con.close()
   
 def pop_fix():
-    a = 1
-#    fix = gts.fixtures(443)
+    con = pg.connect(gts.cnxn())
+    cur = con.cursor()
+    sel_lg = "select api_id from league"
+    cur.execute(sel_lg)
+    apids = cur.fetchall()
+    fix_list = []
+    for league in apids:
+        #print int(league[0])
+        fix = gts.fixtures(int(league[0]))
+        if 'error' not in fix:
+            fix_list.append(fix['fixtures'])
+    print fix_list
+#            for fixture in fix:
+#                print fixture
+            #print fix['fixtures']
+#                wanted_keys = ['homeTeamName', 'awayTeamName', 'result'] # The keys you want
+#                fix_redx((k, bigdict[k]) for k in wanted_keys if k in bigdict)
 #    lgs = gts.leagues()
     #for i in apiid:
 #    print gts.fixtures(i[0])
     
 if __name__ == "__main__":
-    #pop_lg()
-    #pop_season()    
-    pop_team()
+#    pop_lg()
+#    pop_season()    
+#    pop_team()
     #pop_team_season()
-    #pop_fix()
+    pop_fix()
          

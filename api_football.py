@@ -51,7 +51,7 @@ def teams(league_id):
     return response
 
   
-#print lg
+#print fixtures(445)
     
 #print '/v1/competitions/'+str(lg_id)+'/fixtures/'
 #fixture_redux = []
