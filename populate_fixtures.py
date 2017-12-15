@@ -42,7 +42,7 @@ def pop_lg():
     con.close()
     
 def pop_team():
-    
+    #b/c teams are in multiple leagues, teams is not giving a unique list - FIX
     con = pg.connect(gts.cnxn())
     cur = con.cursor()
     sel_lg = "select api_id, id from league;"
@@ -87,7 +87,33 @@ def pop_season():
                 cur.execute(insrt)
                 con.commit()
     con.close()
-  
+
+def pop_season_team_leag():
+    con = pg.connect(gts.cnxn())
+    cur = con.cursor()
+    sel_lg = "select api_id from league"
+    cur.execute(sel_lg)
+    apids = cur.fetchall()
+    insrt = "insert into league_team (league_id, team_id, season_id) values "
+    for league in apids:
+        #print league[0]
+        lg_api_id = league[0]
+        #print lg_api_id
+        teams = gts.teams(lg_api_id)
+#        print '-----'+str(lg_api_id)+'---------'        
+#        print teams
+        if 'teams' in teams:
+            for team in teams['teams']:
+                #print team['name']
+                nm = "'"+team['name'].encode('utf-8').decode('ascii','ignore')+"'"
+                #print nm                
+                insrt = insrt + "((select id from league where api_id = "+str(lg_api_id)+"),(select id from teams where name = "+nm+"), (select id from season where season = '2017'))," 
+    insrt = insrt[:-1]+';'
+    print insrt
+#    cur.execute(insrt)
+#    con.commit()
+#    con.close()
+    
 def pop_fix():
     con = pg.connect(gts.cnxn())
     cur = con.cursor()
@@ -100,8 +126,8 @@ def pop_fix():
         fix = gts.fixtures(int(league[0]))
         if 'error' not in fix:
             fix_list.append(fix['fixtures'])
-    print fix_list
-#            for fixture in fix:
+    print fix_list[0]
+#   s         for fixture in fix:
 #                print fixture
             #print fix['fixtures']
 #                wanted_keys = ['homeTeamName', 'awayTeamName', 'result'] # The keys you want
@@ -110,10 +136,12 @@ def pop_fix():
     #for i in apiid:
 #    print gts.fixtures(i[0])
     
+
+    
 if __name__ == "__main__":
-#    pop_lg()
-#    pop_season()    
-#    pop_team()
-    #pop_team_season()
-    pop_fix()
+    pop_lg()
+    pop_season()    
+    pop_team()
+    pop_season_team_leag()
+#    pop_fix()
          
