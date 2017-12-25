@@ -66,14 +66,16 @@ create table fixtures
     (
      id serial primary key,
      api_id integer not null,
+     league_id integer not null,
      home_team_id integer not null,
      away_team_id integer not null,
-     scheduled_date date,
+     scheduled_date timestamp without time zone,
      home_team_score integer,
      away_team_score integer,
-     data_played date,
+     date_played timestamp without time zone,
      constraint fk_fx_ht foreign key (home_team_id) references teams (id),
-     constraint fk_fx_at foreign key (away_team_id) references teams (id)
+     constraint fk_fx_at foreign key (away_team_id) references teams (id),
+     constraint fk_fx_lg foreign key (league_id) references league (id)
     )
 ;
      

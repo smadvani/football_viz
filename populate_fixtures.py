@@ -3,12 +3,15 @@
 Created on Thu Aug 24 20:12:38 2017
 
 @author: smadvani
-use to populate db tables
+use to populate db tables - run once a year when tables are updated.  Aug 1?
+populate results should look at 
 """
 
 import api_football as gts
 import psycopg2 as pg
 import string as st
+import datetime as dt
+
 
 
 def pop_lg():
@@ -47,6 +50,7 @@ def pop_team():
     cur = con.cursor()
     sel_lg = "select api_id, id from league;"
     cur.execute(sel_lg)
+    teamname = []
     apiid = cur.fetchall()
     for i in apiid:
         insrt = 'insert into teams (name, short_name) values'
@@ -55,15 +59,19 @@ def pop_team():
         if 'teams' in teams:
             #print teams
             for team in teams['teams']:
-#                print team['id']
-#                print team['name'].encode('utf-8').decode('ascii','ignore')
-                nm = "'"+team['name'].encode('utf-8').decode('ascii','ignore')+"'"
-                if team['shortName'] is None or team['shortName']=="":
-                    sn = 'null'
-                else:
-                    #! Kaiserslautern has short name of "K'lautern"
-                    sn = "'"+st.replace(team['shortName'].encode('utf-8').decode('ascii','ignore'), "K'l", "Kl")+"'"
-                insrt = insrt+"("+nm+", "+sn+"), "
+                if team['name'] not in teamname:
+    #                print team['id']
+    #                print team['name'].encode('utf-8').decode('ascii','ignore')
+                    nm = "'"+team['name'].encode('utf-8').decode('ascii','ignore')+"'"
+                    if team['shortName'] is None or team['shortName']=="":
+                        sn = 'null'
+                    else:
+                        #! Kaiserslautern has short name of "K'lautern"
+                        sn = "'"+st.replace(team['shortName'].encode('utf-8').decode('ascii','ignore'), "K'l", "Kl")+"'"
+                    insrt = insrt+"("+nm+", "+sn+"), "
+                teamname.append(team['name'])
+                #print team['name']
+                #print teamname
             insrt = insrt[:-2]+';'
             #print insrt
             cur = con.cursor()
@@ -109,12 +117,12 @@ def pop_season_team_leag():
                 #print nm                
                 insrt = insrt + "((select id from league where api_id = "+str(lg_api_id)+"),(select id from teams where name = "+nm+"), (select id from season where season = '2017'))," 
     insrt = insrt[:-1]+';'
-    print insrt
-#    cur.execute(insrt)
-#    con.commit()
-#    con.close()
+    #print insrt
+    cur.execute(insrt)
+    con.commit()
+    con.close()
     
-def pop_fix():
+def pop_fix(): #insert at beginning of season
     con = pg.connect(gts.cnxn())
     cur = con.cursor()
     sel_lg = "select api_id from league"
@@ -126,15 +134,18 @@ def pop_fix():
         fix = gts.fixtures(int(league[0]))
         if 'error' not in fix:
             fix_list.append(fix['fixtures'])
-    print fix_list[0]
-#   s         for fixture in fix:
-#                print fixture
-            #print fix['fixtures']
-#                wanted_keys = ['homeTeamName', 'awayTeamName', 'result'] # The keys you want
-#                fix_redx((k, bigdict[k]) for k in wanted_keys if k in bigdict)
-#    lgs = gts.leagues()
-    #for i in apiid:
-#    print gts.fixtures(i[0])
+    #print fix_list[1]
+    insrt_fx = 'insert into fixtures (api_id, league_id, home_team_id, away_team_id, scheduled_date) values '
+    for fixture in fix_list:
+        for fix in fixture:
+            #convert time to timestamp format for PG
+            sch_date = (fix['date'].replace('T', ' '))[:-4]
+            insrt_fx = insrt_fx + "("+str(fix['id']) + ", (select id from league where api_id = "+str(fix['competitionId'])+"), (select id from teams where name = '"+ fix['homeTeamName'].encode('utf-8').decode('ascii','ignore')+"'), (select id from teams where name = '"+ fix['awayTeamName'].encode('utf-8').decode('ascii','ignore')+"'), '" + sch_date+"'),"
+    insrt_fx = insrt_fx[:-1]+';'    
+#    print insrt_fx
+    cur.execute(insrt_fx)
+    con.commit()
+    con.close()
     
 
     
@@ -143,5 +154,5 @@ if __name__ == "__main__":
     pop_season()    
     pop_team()
     pop_season_team_leag()
-#    pop_fix()
+    pop_fix()
          
