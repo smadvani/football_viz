@@ -6,4 +6,4 @@ Every August - populate database with the new season with all fixtures and all l
 
 Every week during the season run populate_results.py to get newly finished results.
 
-Point - be able to visualize tables and march toward promotion, relatgation, and league championship.
+Point - be able to visualize tables and march toward promotion, relegation, and league championship.
